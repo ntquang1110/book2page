@@ -1,0 +1,58 @@
+BOOK2PAGE — SOURCE SPECIFICATION
+Archive source: project files prepared for BOOK2PAGE, version 1.0.1.
+
+Purpose
+Convert a book into one self-contained Vietnamese HTML learning artifact. This is not a generic summary or emotional review. Do not invent claims or cases.
+
+Package
+- SKILL.md: objective, hard rules, tiers, pipeline, selection filter and QA gates.
+- prompt.md: agent orchestration prompt and output contract.
+- schema.json: BOOK_DATA JSON Schema.
+- template.html: self-contained HTML, inline CSS/JS, Vietnamese UI and embedded sample BOOK_DATA.
+- design.default.css: fallback design tokens.
+- DESIGN.md: configurable tokens, component overrides and forbidden design rules.
+
+Evidence discipline
+- Label statements [sách], [suy luận], or [ngoài sách].
+- Cases must have traceable sources; otherwise mark “chưa xác minh”.
+- Tier A: full source file/text/PDF/EPUB available.
+- Tier B: table of contents plus excerpts/notes; cases are limited to available evidence.
+- Tier C: only title/author; do not create a case bank. Provide hypotheses, questions and evidence gaps instead.
+- Never invent page numbers or claim to have read unavailable files.
+- Confidence must match the available source tier.
+
+Pipeline
+S0 intake: tier, purpose, 3–5 questions.
+S1 outline and choose 2–3 core chapters.
+S2 capture nine fields per core chapter: C, P, E, M, A, O, L, I, Q.
+S3 trace phenomenon → mechanism → root cause.
+S4 explain 3–5 key claims at four levels: Trẻ, Teen, ĐH, NCS, preserving the same mechanism.
+S5 build a sourced case bank with eight fields and a counter-case, only when tier permits.
+S6 adversarial review: at least three objections, one counterexample and boundary conditions.
+S7 application: one idea → 7-day action → measurable metric → advance prediction.
+S8 validate JSON, render HTML and inject DESIGN.md.
+S9 run QA gates and return to failed stages as needed.
+
+Selection filter
+Keep core definitions, claims and premises, mechanisms, hidden assumptions, boundary conditions, typical/counter cases, and procedures/checklists. Drop long anecdotes, duplicate examples, unnecessary biography/history, raw reference lists and unrelated extensions.
+
+QA gates
+- Every case has a source or is explicitly unverified.
+- Tier C has no case bank.
+- At least two hidden assumptions and three objections.
+- At least one counter-case or counterexample.
+- Explicit “true when / false when” conditions.
+- Four explanation levels preserve the same mechanism.
+- Application has a metric and prediction.
+- HTML works offline without CDN, remote fonts or external runtime dependencies.
+- Confidence matches tier; all UI labels are Vietnamese.
+- DESIGN.md is applied to design tokens and component overrides; forbidden rules are enforced.
+
+Design system
+- Dark mode required; high contrast and readable hierarchy.
+- System fonts only; no remote fonts.
+- Minimum font size 14px.
+- Border radius no greater than 12px.
+- Animation duration no greater than 200ms.
+- Responsive and screen-first, with print/PDF support.
+- Output exactly one book-<slug>.html artifact with validated JSON embedded in BOOK_DATA.
