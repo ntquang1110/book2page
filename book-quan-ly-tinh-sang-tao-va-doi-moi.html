@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light"><title>BOOK2PAGE — Quản lý tính sáng tạo và đổi mới</title>
+<style id="design-tokens">
+:root{--bg:#0a0a0a;--panel:#141414;--fg:#f0f0f0;--muted:#a0a0a0;--border:#2a2a2a;--accent:#f97316;--accent-fg:#0a0a0a;--radius:4px;--font:system-ui,-apple-system,"Segoe UI",sans-serif}
+[data-theme="light"]{--bg:#fff;--panel:#f7f8fa;--fg:#1a1a1a;--muted:#5a6472;--border:#e2e5ea;--accent:#ea580c;--accent-fg:#fff}
+</style>
+<style id="structural-css">
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 var(--font)}button,input,select{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--border);padding:8px;border-radius:var(--radius)}header,.toolbar{padding:16px 4vw;border-bottom:1px solid var(--border)}header h1{margin:0}.layout{display:grid;grid-template-columns:220px minmax(0,1fr);max-width:1280px;margin:auto}.toc{position:sticky;top:0;height:100vh;overflow:auto;padding:16px;background:var(--panel)}.toc a{display:block;color:var(--muted);padding:5px}main{padding:20px 4vw}section{margin:30px 0;scroll-margin-top:16px}h2{border-bottom:1px solid var(--border);padding-bottom:8px}.thesis,.card,details{background:var(--panel);border:1px solid var(--border);padding:14px;margin:10px 0}.thesis{border-left:6px solid var(--accent)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tabs button[aria-selected=true]{border-color:var(--accent);color:var(--accent)}.case-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px}td,th{text-align:left;vertical-align:top;padding:8px;border-bottom:1px solid var(--border)}th{background:var(--panel)}.checklist{list-style:none;padding:0}.muted,small{color:var(--muted)}@media(max-width:760px){.layout{grid-template-columns:1fr}.toc{position:static;height:auto}.toc ol{columns:2}}@media print{.toolbar,.toc,.case-toolbar{display:none}.layout{display:block}body{background:white;color:black}}
+</style>
+<!-- DESIGN_OVERRIDES -->
+<style id="design-overrides">.thesis{border-radius:0;border-left-width:6px}.case-table th{background:var(--accent);color:var(--accent-fg)}.toc a.active{font-weight:700}</style>
+</head><body>
+<div class="toolbar"><b>BOOK2PAGE / Bản đồ tri thức</b> <button id="theme">Đổi sáng/tối</button> <button onclick="window.print()">In / PDF</button></div>
+<header><h1 id="title"></h1><p id="author" class="muted"></p><p id="purpose"></p><p id="tier"></p><b>Câu hỏi trọng tâm</b><ul id="questions"></ul></header>
+<div class="layout"><nav class="toc"><b>MỤC LỤC</b><ol id="toc"></ol></nav><main>
+<section id="thesis" data-toc="Luận đề"><h2>Luận đề</h2><div class="thesis" id="thesisText"></div></section>
+<section id="argument" data-toc="Bản đồ lập luận"><h2>Bản đồ lập luận</h2><div class="card"><b>Kết luận:</b> <span id="conclusion"></span><h3>Tiền đề</h3><ul id="premises"></ul><h3>Bằng chứng</h3><ul id="evidence"></ul><h3>Cơ chế</h3><p id="mechanism"></p><h3>Giả định ngầm</h3><ul id="assumptions"></ul><b>Đúng khi:</b> <span id="trueWhen"></span><p><b>Sai khi:</b> <span id="falseWhen"></span></p></div></section>
+<section id="root" data-toc="Cơ chế gốc"><h2>Cơ chế gốc</h2><div id="roots"></div></section>
+<section id="explain" data-toc="Giải thích 4 tầng"><h2>Giải thích 4 tầng</h2><div id="explain4"></div></section>
+<section id="principles" data-toc="Nguyên tắc"><h2>Nguyên tắc</h2><div id="principleList" class="grid"></div></section>
+<section id="cases" data-toc="Kho case"><h2>Kho case</h2><p id="tierNotice" class="muted"></p><div class="case-toolbar"><input id="search" placeholder="Tìm case…"><select id="filter"><option value="">Tất cả nguồn</option><option value="yes">Có nguồn</option><option value="no">Chưa xác minh</option></select></div><div class="table-wrap"><table class="case-table"><thead><tr><th>Mã</th><th>Bối cảnh</th><th>Vấn đề</th><th>Quyết định</th><th>Kết quả</th><th>Bài học</th><th>Điều kiện</th><th>Nguồn</th></tr></thead><tbody id="cases"></tbody></table></div></section>
+<section id="review" data-toc="Phản biện"><h2>Phản biện &amp; giới hạn</h2><ol id="attacks"></ol><p><b>Phản ví dụ:</b> <span id="counter"></span></p><p><b>Điều kiện biên:</b> <span id="edge"></span></p></section>
+<section id="apply" data-toc="Ứng dụng"><h2>Ứng dụng</h2><div class="grid"><div class="card"><b>Một ý cốt lõi</b><p id="idea"></p></div><div class="card"><b>7 ngày</b><p id="action"></p></div><div class="card"><b>Thước đo</b><p id="metric"></p></div><div class="card"><b>Dự đoán trước</b><p id="prediction"></p></div></div></section>
+<section id="certification" data-toc="Chứng nhận hiểu sâu"><h2>Chứng nhận hiểu sâu</h2><ul id="cert" class="checklist"></ul><p id="progress"></p></section>
+<section id="gaps" data-toc="Vùng chưa đọc"><h2>Vùng chưa đọc / cần tra gốc</h2><ul id="gaps"></ul></section>
+</main></div><footer class="muted" id="footer" style="padding:20px">BOOK2PAGE · Tài liệu học tập có truy xuất nguồn.</footer>
+<script type="application/json" id="BOOK_DATA">
+{
+  "meta": {
+    "title": "Quản lý tính sáng tạo và đổi mới",
+    "author": "Harvard Business Essentials; bản dịch Trần Thị Bích Nga – Phạm Ngọc Sáu; hiệu đính TS. Nguyễn Văn Qui",
+    "tier": "A",
+    "confidence": "cao",
+    "purpose": "Nắm cơ chế quản trị đổi mới từ phát sinh ý tưởng đến thương mại hóa; áp dụng vào doanh nghiệp và dự án sản phẩm.",
+    "questions": [
+      "Làm sao cân bằng đổi mới nâng cao với đổi mới triệt để?",
+      "Làm sao biến ý tưởng thành cơ hội có giá trị và thương mại hóa được?",
+      "Nhà lãnh đạo cần thiết kế môi trường, đội nhóm và hệ thống quyết định thế nào để đổi mới diễn ra liên tục?",
+      "Làm sao đánh giá dự án mới khi dữ liệu và dự báo còn bất định?"
+    ],
+    "date": "2026-10-29",
+    "chaptersRead": [
+      "Lời giới thiệu",
+      "1. Các hình thức đổi mới",
+      "2. Đường cong S",
+      "3. Phát sinh ý tưởng",
+      "4. Nhận biết cơ hội",
+      "5. Đưa ý tưởng đổi mới đến với thị trường",
+      "6. Tính sáng tạo và nhóm sáng tạo",
+      "7. Nâng cao tính sáng tạo",
+      "8. Những điều nhà lãnh đạo cần làm",
+      "Phụ lục A và B"
+    ],
+    "lang": "vi"
+  },
+  "thesis": "Đổi mới không chỉ là nảy ra ý tưởng hay phát minh công nghệ. Đó là một hệ thống biến hiểu biết mới thành giá trị cho khách hàng và tổ chức: phát sinh ý tưởng → nhận biết cơ hội → phát triển → thương mại hóa. Khả năng duy trì hệ thống này phụ thuộc đồng thời vào lựa chọn danh mục đổi mới, cách kiểm chứng cơ hội, cấu trúc tổ chức, năng lực nhóm và môi trường lãnh đạo.",
+  "argument": {
+    "conclusion": "Doanh nghiệp cần quản trị đổi mới như một danh mục và một năng lực tổ chức liên tục, thay vì trông chờ vào thiên tài cá nhân hoặc chỉ tối ưu sản phẩm đang sinh lời.",
+    "premises": [
+      "[sách] Đổi mới được mô tả là phát minh đi kèm khai thác; ý tưởng chỉ được thử thách cuối cùng khi gặp khách hàng và thị trường.",
+      "[sách] Đổi mới nâng cao khai thác nền tảng hiện tại, còn đổi mới triệt để có thể làm thay đổi nền tảng cạnh tranh và tạo ra thị trường mới.",
+      "[sách] Những hệ thống sàng lọc tốt có thể tối ưu hóa thị trường hiện tại nhưng cũng loại bỏ ý tưởng triệt để quá sớm nếu tiêu chí chỉ phản ánh nhu cầu hiện tại.",
+      "[sách] Sáng tạo cá nhân phụ thuộc vào sự thông thạo, kỹ năng tư duy sáng tạo và động lực; môi trường quản lý có thể tác động đến cả ba."
+    ],
+    "evidence": [
+      "[sách] Dick Drew tại 3M quan sát vấn đề sơn bị tróc, phát triển băng dính che sơn và tạo ra một dòng kinh doanh mới.",
+      "[sách] Các ví dụ về bóng bán dẫn, ảnh kỹ thuật số, đèn điện và ngành chiếu sáng bằng gas minh họa việc công nghệ mới có thể thay đổi hoặc phá vỡ ngành cũ.",
+      "[sách] Swatch và Black & Decker minh họa cách nền tảng chung cho phép mở rộng dòng sản phẩm, tăng đa dạng và giảm độ phức tạp.",
+      "[sách] Phễu ý tưởng, hệ thống giai đoạn–cổng, phân tích hòa vốn, NPV/IRR và phân tích độ nhạy cung cấp các cách ra quyết định nhưng phụ thuộc chất lượng giả định."
+    ],
+    "mechanism": "Tạo nguồn ý tưởng đa dạng → diễn giải vấn đề thành cơ hội khách hàng → sàng lọc theo chiến lược nhưng giữ chỗ cho bất định → thử nghiệm và phát triển → quyết định đầu tư theo bằng chứng cập nhật → thương mại hóa và học từ phản hồi. Môi trường lãnh đạo quyết định liệu ý tưởng có được nêu ra, thử nghiệm, phản biện và cấp nguồn lực hay bị triệt tiêu bởi áp lực ngắn hạn.",
+    "assumptions": [
+      "Khách hàng hiện tại không đại diện đầy đủ cho nhu cầu tương lai; thị trường mới có thể nhỏ và lợi nhuận ban đầu thấp.",
+      "Ý tưởng có thể tạo giá trị nhưng chưa thể chứng minh bằng dữ liệu định lượng ở giai đoạn đầu.",
+      "Cơ cấu tổ chức, phần thưởng và quyền tự chủ ảnh hưởng đến hành vi sáng tạo, không chỉ năng lực cá nhân.",
+      "Các mô hình tài chính là công cụ quyết định có điều kiện, không phải dự báo chắc chắn; kết quả nhạy với giả định đầu vào."
+    ],
+    "limits": {
+      "trueWhen": "Khi tổ chức có quy trình học hỏi và thử nghiệm, tiêu chí phù hợp từng loại đổi mới, lãnh đạo bảo vệ thử nghiệm có kiểm soát và quyết định được cập nhật theo bằng chứng.",
+      "falseWhen": "Khi công nghệ/nhu cầu bị giới hạn bởi quy định hoặc năng lực cốt lõi, khi thử nghiệm gây rủi ro không chấp nhận được, hoặc khi tổ chức dùng một bộ tiêu chí tài chính duy nhất cho mọi loại đổi mới."
+    }
+  },
+  "rootCause": [
+    {
+      "phenomenon": "Ý tưởng mới không được cấp ngân sách",
+      "mechanism": "Tiêu chí đánh giá dựa trên doanh thu và khách hàng hiện tại khiến dự án mới có vẻ nhỏ, rủi ro hoặc lợi nhuận thấp.",
+      "root": "Hệ thống lựa chọn phản ánh cấu trúc kinh doanh hiện tại và khuyến khích tối ưu ngắn hạn.",
+      "source": "sách"
+    },
+    {
+      "phenomenon": "Nhân viên ít đề xuất ý tưởng",
+      "mechanism": "Thiếu tự chủ, thiếu thời gian/nguồn lực hoặc sợ bị phạt khi thất bại làm giảm động lực nội tại.",
+      "root": "Thiết kế quản lý và môi trường tâm lý không bảo vệ thử nghiệm có trách nhiệm.",
+      "source": "sách"
+    },
+    {
+      "phenomenon": "Công ty đầu tư dự án nhưng không thương mại hóa thành công",
+      "mechanism": "Ý tưởng được đánh giá về kỹ thuật mà chưa xác thực nhu cầu, chi phí, kênh phân phối và sự sẵn lòng trả tiền.",
+      "root": "Đánh đồng phát minh với đổi mới có giá trị thương mại.",
+      "source": "suy luận"
+    },
+    {
+      "phenomenon": "Công ty bị công nghệ mới vượt qua",
+      "mechanism": "Tập trung cải tiến đường cong S hiện tại ngay cả khi hiệu quả tăng thêm đang giảm.",
+      "root": "Không theo dõi điểm bão hòa và không duy trì danh mục thử nghiệm cho đường cong S tiếp theo.",
+      "source": "sách"
+    }
+  ],
+  "explain4": [
+    {
+      "point": "Đổi mới là phát minh cộng với khai thác",
+      "kid": "Nghĩ ra món đồ mới chưa đủ; phải làm cho nó dùng được và giúp ích thật.",
+      "teen": "Ý tưởng chỉ trở thành đổi mới khi được biến thành sản phẩm, dịch vụ hoặc cách làm có giá trị.",
+      "undergrad": "Đổi mới kết nối tạo ý tưởng, phát triển năng lực triển khai và xác thực giá trị qua khách hàng/thị trường.",
+      "phd": "Cần phân biệt novelty, implementation và value capture; kết quả đổi mới phụ thuộc cả quá trình chuyển hóa tri thức lẫn điều kiện thương mại hóa."
+    },
+    {
+      "point": "Đường cong S và thời điểm chuyển đổi",
+      "kid": "Một cách làm ban đầu tiến bộ nhanh, rồi chậm dần; lúc đó cần thử cách mới.",
+      "teen": "Công nghệ thường tăng hiệu quả chậm lúc đầu, nhanh ở giữa rồi gần đạt trần. Chỉ nâng cấp cách cũ có thể không đủ.",
+      "undergrad": "Đường cong S mô tả tiến bộ hiệu suất theo nỗ lực; quan sát độ dốc, giới hạn kỹ thuật và tốc độ đối thủ để cân nhắc chuyển nền tảng.",
+      "phd": "Đường cong S là mô hình khái niệm, không phải quy luật dự báo tuyệt đối; ranh giới công nghệ, kiến trúc hệ thống và tiêu chí hiệu suất có thể thay đổi."
+    },
+    {
+      "point": "Sàng lọc ý tưởng cần cân bằng",
+      "kid": "Đừng giữ mọi ý tưởng, nhưng cũng đừng vứt ý tưởng lạ chỉ vì chưa thấy lợi ngay.",
+      "teen": "Cần loại dự án yếu nhưng phải chừa cơ hội cho ý tưởng mới chưa có dữ liệu thị trường rõ ràng.",
+      "undergrad": "Dùng các cổng đánh giá cho tính khả thi, phù hợp chiến lược, giá trị khách hàng và tài chính; thiết kế luồng riêng cho đổi mới triệt để.",
+      "phd": "Cơ chế lựa chọn có thể tạo thiên lệch sống sót và phụ thuộc đường đi; tiêu chí, quyền lực và chân trời lợi nhuận định hình loại ý tưởng được giữ lại."
+    },
+    {
+      "point": "Sáng tạo có ba thành phần",
+      "kid": "Muốn nghĩ ra cách hay cần biết việc đó, biết nhìn theo cách khác và thật sự muốn làm.",
+      "teen": "Sáng tạo đến từ kiến thức, cách tiếp cận linh hoạt và động lực; chỉ thông minh thôi chưa đủ.",
+      "undergrad": "Khung Amabile trong sách nêu domain expertise, creative-thinking skills và intrinsic motivation; quản lý tác động qua phân công, tự chủ, thời gian và nguồn lực.",
+      "phd": "Ba thành phần tương tác: expertise cung cấp vật liệu, kỹ năng tư duy hỗ trợ tái tổ hợp, động lực nội tại duy trì khám phá; áp lực kiểm soát có thể làm suy giảm động lực."
+    },
+    {
+      "point": "Đổi mới cần môi trường tổ chức",
+      "kid": "Một người có ý tưởng tốt vẫn cần đội nhóm, thời gian và người cho phép thử.",
+      "teen": "Cơ chế thưởng-phạt và quyền tự chủ có thể khiến nhân viên chia sẻ hoặc giấu ý tưởng.",
+      "undergrad": "Lãnh đạo thiết lập định hướng, tạo an toàn cho bất đồng trí tuệ, phân bổ nguồn lực, tổ chức linh hoạt và gắn danh mục đổi mới với chiến lược.",
+      "phd": "Năng lực đổi mới là thuộc tính hệ thống: incentive, quyền quyết định, cấu trúc tổ chức, phân bổ nguồn lực và khả năng hấp thụ tri thức cùng tác động đến việc chuyển hóa ý tưởng."
+    }
+  ],
+  "principles": [
+    {
+      "name": "Tách hai chân trời đổi mới",
+      "oneLine": "Tối ưu hoạt động hiện tại đồng thời thử nghiệm lựa chọn có thể thay thế nó.",
+      "useWhen": "Khi công nghệ hiện hữu đang sinh lời nhưng có dấu hiệu chững lại hoặc xuất hiện nhu cầu mới.",
+      "avoidWhen": "Không dùng nhãn 'triệt để' để bỏ qua bằng chứng, nguồn lực và năng lực triển khai.",
+      "source": "[sách] Chương 1–2"
+    },
+    {
+      "name": "Bắt đầu từ vấn đề khách hàng",
+      "oneLine": "Quan sát cách người dùng thực sự làm việc để tìm nhu cầu chưa được đáp ứng.",
+      "useWhen": "Khi tìm ý tưởng sản phẩm, dịch vụ hoặc quy trình mới.",
+      "avoidWhen": "Không đồng nhất lời khách hàng nói với nhu cầu tiềm ẩn; cần quan sát và thử nghiệm.",
+      "source": "[sách] Lời giới thiệu; Chương 3"
+    },
+    {
+      "name": "Sàng lọc có nhiều cổng",
+      "oneLine": "Chia quyết định thành các giai đoạn, cập nhật bằng chứng trước khi tăng vốn.",
+      "useWhen": "Khi dự án có nhiều bất định và cần phối hợp nhiều chức năng.",
+      "avoidWhen": "Không để tiêu chí của thị trường hiện tại loại bỏ mọi ý tưởng mới từ quá sớm.",
+      "source": "[sách] Chương 5"
+    },
+    {
+      "name": "Bảo vệ động lực nội tại",
+      "oneLine": "Rõ mục tiêu, trao quyền chọn cách làm và cấp đủ thời gian/nguồn lực.",
+      "useWhen": "Khi công việc cần khám phá, tái tổ hợp kiến thức và giải quyết vấn đề chưa có lời giải.",
+      "avoidWhen": "Không nhầm tự chủ với thiếu mục tiêu, thiếu trách nhiệm hoặc không có mốc kiểm tra.",
+      "source": "[sách] Chương 6–7"
+    },
+    {
+      "name": "Tổ chức phản biện đa dạng",
+      "oneLine": "Kết hợp chuyên môn sâu với góc nhìn mới và biến bất đồng thành kiểm tra giả định.",
+      "useWhen": "Khi quyết định chiến lược, thiết kế sản phẩm hoặc giải bài toán phức tạp.",
+      "avoidWhen": "Không để xung đột cá nhân lấn át phản biện dựa trên bằng chứng.",
+      "source": "[sách] Chương 6"
+    },
+    {
+      "name": "Tài chính là giả thuyết có độ nhạy",
+      "oneLine": "Dùng hòa vốn, NPV/IRR và kịch bản; ghi rõ giả định làm thay đổi quyết định.",
+      "useWhen": "Khi so sánh phương án đầu tư có dòng tiền ước tính.",
+      "avoidWhen": "Không coi con số NPV dương là bảo đảm thành công nếu đầu vào yếu hoặc bất định lớn.",
+      "source": "[sách] Chương 5; Phụ lục A"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C1",
+      "context": "3M; Dick Drew quan sát việc sơn ô tô bị tróc khi tháo băng che.",
+      "problem": "Băng keo hiện có làm hỏng lớp sơn, gây tốn thời gian sửa.",
+      "decision": "Nghiên cứu vật liệu giấy và keo để tạo băng dính có độ bám phù hợp.",
+      "result": "Sản phẩm băng dính che sơn tạo lợi nhuận lâu dài và mở ra dòng kinh doanh mới.",
+      "lesson": "Quan sát vấn đề tại nơi khách hàng sử dụng có thể tạo ra ý tưởng giá trị ngoài nhiệm vụ ban đầu.",
+      "conditions": "Cần có kiến thức liên quan, thời gian thử nghiệm và môi trường lãnh đạo cho phép khám phá.",
+      "counterCase": "Không phải mọi khó chịu của một khách hàng đều đủ lớn để hình thành thị trường.",
+      "source": "[sách] Lời giới thiệu; case được kể trực tiếp trong văn bản nguồn."
+    },
+    {
+      "id": "C2",
+      "context": "Ngành chiếu sáng: công nghệ gas đối mặt với đèn điện.",
+      "problem": "Các doanh nghiệp gas cố bảo vệ mô hình hiện hữu khi công nghệ cạnh tranh cải thiện.",
+      "decision": "Một số doanh nghiệp cải tiến gas và tìm thị trường khác; không thể ngăn đèn điện lan rộng chỉ bằng vận động chống đối.",
+      "result": "Chiếu sáng bằng gas suy giảm ở thị trường chiếu sáng nhưng công nghệ gas còn tìm được ứng dụng đốt nóng.",
+      "lesson": "Khi bị công nghệ mới thay thế, có thể chuyển sang phân khúc khác thay vì chỉ bảo vệ thị trường cũ.",
+      "conditions": "Khả năng chuyển đổi phụ thuộc năng lực công nghệ, nhu cầu phân khúc mới và kinh tế đơn vị.",
+      "counterCase": "Một công nghệ cũ vẫn có thể tồn tại trong ngách nơi nó có ưu thế thực sự.",
+      "source": "[sách] Chương 2; phần ví dụ về công nghiệp gas."
+    },
+    {
+      "id": "C3",
+      "context": "Swatch/SMH xây dựng dòng đồng hồ từ một nền tảng chung.",
+      "problem": "Phải phục vụ nhiều thị hiếu mà không tạo độ phức tạp và chi phí riêng cho từng mẫu quá lớn.",
+      "decision": "Dùng bộ máy/nền tảng chung, biến đổi mặt, khung và dây để tạo các biến thể.",
+      "result": "Một nền tảng hỗ trợ nhiều sản phẩm và phân khúc với chi phí thấp hơn.",
+      "lesson": "Tập trung đổi mới vào nền tảng có thể tạo quy mô và đa dạng cùng lúc.",
+      "conditions": "Các biến thể cần chia sẻ đủ thành phần chung và vẫn đáp ứng khác biệt có ý nghĩa với khách hàng.",
+      "counterCase": "Nền tảng quá cứng có thể giới hạn khác biệt hóa hoặc khiến mọi sản phẩm cùng chịu một điểm yếu.",
+      "source": "[sách] Chương 5; mục Mở rộng sự đổi mới thông qua nền tảng sản phẩm."
+    },
+    {
+      "id": "C4",
+      "context": "Toyota phát triển Prius bên cạnh các dòng xe hiện hữu.",
+      "problem": "Sản phẩm mới có thể lấy doanh số từ sản phẩm cũ của chính công ty.",
+      "decision": "Đánh giá đổi mới theo tác động tổng thể danh mục thay vì chỉ coi doanh thu chuyển dịch là thất bại.",
+      "result": "Một phần doanh số có thể bị 'tiêu diệt' từ dòng cũ nhưng việc không tự thay thế có thể để đối thủ làm thay.",
+      "lesson": "Đo doanh thu gia tăng và vị thế dài hạn ở cấp danh mục, không chỉ ở từng SKU.",
+      "conditions": "Cần phân biệt doanh số chuyển dịch nội bộ với doanh số mới và lợi nhuận đóng góp.",
+      "counterCase": "Tự ăn thị phần mà không mở rộng thị trường hay cải thiện lợi thế có thể phá hủy giá trị.",
+      "source": "[sách] Chương 5; mục Vấn đề 'tiêu diệt đồng loại'."
+    },
+    {
+      "id": "C5",
+      "context": "Acme Communication đánh giá đề xuất điện thoại IdiotFone có GPS.",
+      "problem": "Ý tưởng hấp dẫn nhưng ban điều hành chưa rõ tính khả thi tài chính.",
+      "decision": "Nhóm dự án ước tính dòng tiền nhiều năm và chiết khấu theo mức 10%.",
+      "result": "Trong ví dụ đơn giản của sách, NPV dương nhẹ; dự án được chú ý nhưng các giả định vẫn cần kiểm tra.",
+      "lesson": "NPV giúp so sánh giá trị thời gian của tiền nhưng không cứu được dự báo dòng tiền yếu.",
+      "conditions": "Cần kiểm tra nguồn giả định chi phí, doanh số, giá, thời gian và kịch bản thấp/cơ sở/cao.",
+      "counterCase": "Nếu thay đổi nhỏ của doanh số hoặc chi phí khiến NPV âm, kết luận đầu tư không vững.",
+      "source": "[sách] Chương 5; phần phân tích luồng tiền chiết tính và bảng 5-1."
+    },
+    {
+      "id": "C6",
+      "context": "3M xây dựng văn hóa khuyến khích đổi mới sau kinh nghiệm của Dick Drew.",
+      "problem": "Thành công không nên phụ thuộc vào một cá nhân tự ý nghiên cứu trong điều kiện may mắn.",
+      "decision": "Lãnh đạo William McKnight thúc đẩy môi trường để đổi mới trở thành hoạt động liên tục.",
+      "result": "Sách mô tả đổi mới trên nhiều lĩnh vực là nguồn phát triển lâu dài của 3M.",
+      "lesson": "Lãnh đạo có thể chuyển một ngoại lệ cá nhân thành năng lực tổ chức thông qua chuẩn mực và môi trường.",
+      "conditions": "Cần cân bằng tự chủ với mục tiêu, nguồn lực và trách nhiệm.",
+      "counterCase": "Tự do không có định hướng có thể tạo ra nhiều thử nghiệm nhưng ít giá trị thương mại.",
+      "source": "[sách] Lời giới thiệu."
+    }
+  ],
+  "adversarial": {
+    "attacks": [
+      "Mô hình đường cong S có thể khiến nhà quản lý chuyển công nghệ quá sớm nếu họ nhầm nhiễu ngắn hạn với giới hạn thực sự.",
+      "Khung ba thành phần sáng tạo hữu ích để thiết kế môi trường nhưng không phải công thức định lượng dự đoán chính xác ai sẽ sáng tạo.",
+      "Hệ thống giai đoạn–cổng có thể trở thành bộ máy quan liêu, ưu tiên dự án dễ đo lường và loại ý tưởng đột phá chưa có dữ liệu.",
+      "Ví dụ lịch sử trong sách minh họa cơ chế nhưng không tự động chứng minh rằng cùng một chiến lược sẽ thành công trong mọi ngành."
+    ],
+    "counterExample": "Một công nghệ cũ không nhất thiết phải bị loại bỏ hoàn toàn: như ví dụ trong sách về ngành gas, công nghệ có thể mất thị trường chiếu sáng nhưng tồn tại ở ứng dụng đốt nóng. Vì vậy, 'bị phá vỡ' ở một phân khúc không đồng nghĩa công nghệ biến mất khỏi mọi thị trường.",
+    "edgeCase": "Trong lĩnh vực an toàn cao, y tế hoặc chịu quản lý nghiêm ngặt, không thể tối đa hóa thử nghiệm tự do; cần sandbox, kiểm soát rủi ro, phê duyệt và bằng chứng phù hợp trước khi thương mại hóa."
+  },
+  "apply": {
+    "oneIdea": "Thiết kế danh mục đổi mới hai đường: nâng cao cho hoạt động cốt lõi và thử nghiệm triệt để cho cơ hội tương lai; không áp cùng một tiêu chí lợi nhuận ngắn hạn cho cả hai.",
+    "action7d": "Ngày 1: liệt kê 10 ý tưởng/dự án. Ngày 2: phân loại nâng cao/triệt để. Ngày 3: xác định vấn đề khách hàng và giả định quan trọng. Ngày 4: chọn 2 thử nghiệm nhỏ. Ngày 5: ước lượng chi phí, chỉ số và ngưỡng dừng. Ngày 6: phản biện chéo với người khác chức năng. Ngày 7: quyết định tiếp tục, sửa hoặc dừng dựa trên bằng chứng.",
+    "metric": "100% ý tưởng được gắn loại đổi mới; ít nhất 2 thử nghiệm có giả thuyết, chỉ số đầu ra, chi phí tối đa và ngưỡng dừng được ghi trước; đo thời gian từ ý tưởng đến phản hồi khách hàng.",
+    "prediction": "Nếu tách tiêu chí đánh giá theo loại đổi mới và thử nghiệm với khách hàng sớm, trong 7 ngày nhóm sẽ phát hiện ít nhất một giả định quan trọng chưa có bằng chứng và loại bỏ hoặc điều chỉnh ít nhất một ý tưởng trước khi đầu tư lớn."
+  },
+  "gaps": [
+    {
+      "what": "Dữ liệu nghiên cứu gốc cho các nhận định về sáng tạo",
+      "whyNeed": "Văn bản trình bày tổng hợp và dẫn các nhà nghiên cứu; để ra quyết định nhân sự cần kiểm tra nghiên cứu gốc và bối cảnh áp dụng.",
+      "whereToRead": "Chương 6; phần Teresa Amabile và các nguồn nghiên cứu được sách dẫn."
+    },
+    {
+      "what": "Dữ liệu định lượng của từng đường cong S theo ngành",
+      "whyNeed": "Đường cong S là mô hình khái niệm; điểm bão hòa phải được xác định bằng chỉ số kỹ thuật/thị trường cụ thể.",
+      "whereToRead": "Chương 2; đối chiếu dữ liệu ngành và hiệu suất theo thời gian."
+    },
+    {
+      "what": "Cách thiết kế tiêu chí cho danh mục đổi mới của doanh nghiệp cụ thể",
+      "whyNeed": "Sách đưa ra nguyên tắc, không thể thay thế dữ liệu chiến lược, năng lực, dòng tiền và rủi ro của từng doanh nghiệp.",
+      "whereToRead": "Chương 5 và Chương 8; áp dụng với dữ liệu nội bộ."
+    },
+    {
+      "what": "Kiểm chứng các ví dụ lịch sử và con số tài chính trước khi dùng trong tài liệu chính thức",
+      "whyNeed": "Bản dịch có thể có lỗi OCR/đánh máy; các ví dụ minh họa không nên dùng như dữ liệu hiện hành.",
+      "whereToRead": "Đối chiếu bản in và nguồn gốc mà sách trích dẫn."
+    }
+  ],
+  "certification": {
+    "reconstruct": false,
+    "predict": false,
+    "challenge": false,
+    "teach": false
+  },
+  "review": {
+    "h24": false,
+    "w1": false,
+    "m1": false,
+    "m3": false
+  }
+}
+</script>
+<script>
+(()=>{'use strict';const $=id=>document.getElementById(id),D=JSON.parse($('BOOK_DATA').textContent),E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const A=D.argument||{},T=D.meta.tier;
+$('title').textContent=D.meta.title;$('author').textContent=D.meta.author||'Chưa xác định tác giả';$('purpose').textContent='Mục đích: '+D.meta.purpose;$('tier').textContent='Tier '+T+' · Độ tin cậy: '+D.meta.confidence;$('questions').innerHTML=(D.meta.questions||[]).map(x=>'<li>'+E(x)+'</li>').join('');$('thesisText').textContent=D.thesis;$('conclusion').textContent=A.conclusion||'';for(const [id,arr] of [['premises',A.premises],['evidence',A.evidence],['assumptions',A.assumptions],['attacks',D.adversarial?.attacks]])$(id).innerHTML=(arr||[]).map(x=>'<li>'+E(x)+'</li>').join('');$('mechanism').textContent=A.mechanism||'';$('trueWhen').textContent=A.limits?.trueWhen||'';$('falseWhen').textContent=A.limits?.falseWhen||'';$('roots').innerHTML=(D.rootCause||[]).map(x=>'<details><summary>'+E(x.phenomenon)+'</summary><p>'+E(x.mechanism)+'</p><p>'+E(x.root)+'</p><small>'+E(x.source)+'</small></details>').join('')||'<p class="muted">Chưa đủ nguồn để dựng cơ chế gốc.</p>';
+const tabs=[['kid','Trẻ'],['teen','Teen'],['undergrad','ĐH'],['phd','NCS']];$('explain4').innerHTML=(D.explain4||[]).map((x,i)=>'<article class="card"><h3>'+E(x.point)+'</h3><div class="tabs">'+tabs.map((t,j)=>'<button data-tab="'+t[0]+'" data-i="'+i+'" aria-selected="'+(!j)+'">'+t[1]+'</button>').join('')+'</div>'+tabs.map((t,j)=>'<p data-panel="'+t[0]+'" data-i="'+i+'" '+(j?'hidden':'')+'>'+E(x[t[0]])+'</p>').join('')+'</article>').join('')||'<p class="muted">Chưa có luận điểm đã xác minh.</p>';
+$('principleList').innerHTML=(D.principles||[]).map(x=>'<article class="card"><h3>'+E(x.name)+'</h3><p>'+E(x.oneLine)+'</p><p>Dùng khi: '+E(x.useWhen)+'</p><p>Tránh khi: '+E(x.avoidWhen)+'</p><small>'+E(x.source)+'</small></article>').join('');$('tierNotice').textContent=T==='C'?'Tier C: không dựng kho case khi chỉ có tên sách.':'';
+function cases(){const q=$('search').value.toLocaleLowerCase('vi'),f=$('filter').value;const rows=(T==='C'?[]:(D.cases||[])).filter(c=>{const v=!!c.source&&!/chưa/i.test(c.source);return(!f||(f==='yes'?v:!v))&&(!q||Object.values(c).join(' ').toLocaleLowerCase('vi').includes(q))});$('cases').innerHTML=rows.map(c=>'<tr>'+['id','context','problem','decision','result','lesson','conditions','source'].map(k=>'<td>'+E(c[k])+'</td>').join('')+'</tr>').join('')}$('search').addEventListener('input',cases);$('filter').addEventListener('change',cases);cases();$('counter').textContent=D.adversarial?.counterExample||'';$('edge').textContent=D.adversarial?.edgeCase||'';for(const [id,k] of [['idea','oneIdea'],['action','action7d'],['metric','metric'],['prediction','prediction']])$(id).textContent=D.apply?.[k]||'';
+const labels={reconstruct:'Tái tạo lập luận khi đóng sách',predict:'Dự đoán một case mới',challenge:'Nêu 3 phản biện và 1 phản ví dụ',teach:'Dạy lại từ Trẻ đến NCS'},key='b2p_'+D.meta.title;let state={};try{state=JSON.parse(localStorage.getItem(key)||'{}')}catch{}$('cert').innerHTML=Object.entries(labels).map(([k,v])=>'<li><label><input type="checkbox" data-k="'+k+'" '+(state[k]?'checked':'')+'> '+E(v)+'</label></li>').join('');function progress(){const b=[...document.querySelectorAll('[data-k]')],n=b.filter(x=>x.checked).length;$('progress').textContent=n+'/'+b.length+' hoàn thành';try{localStorage.setItem(key,JSON.stringify(Object.fromEntries(b.map(x=>[x.dataset.k,x.checked]))))}catch{}}document.querySelectorAll('[data-k]').forEach(x=>x.addEventListener('change',progress));progress();$('gaps').innerHTML=(D.gaps||[]).map(x=>'<li><b>'+E(x.what)+'</b> — '+E(x.whyNeed)+' <small>'+E(x.whereToRead)+'</small></li>').join('');$('toc').innerHTML=[...document.querySelectorAll('main section[data-toc]')].map(s=>'<li><a href="#'+s.id+'">'+E(s.dataset.toc)+'</a></li>').join('');$('footer').textContent='Nguồn: '+D.meta.title+' · '+D.meta.author+' · Tier '+T+' · '+D.meta.date;document.addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;document.querySelectorAll('[data-i="'+b.dataset.i+'"][data-tab]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('[data-i="'+b.dataset.i+'"][data-panel]').forEach(x=>x.hidden=x.dataset.panel!==b.dataset.tab)});$('theme').onclick=()=>document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';})();
+</script></body></html>
