@@ -1,0 +1,15 @@
+/* Fallback design tokens: system fonts only; offline-ready. */
+:root {
+  --bg: #0a0a0a; --bg-elev: #141414; --fg: #f0f0f0; --fg-muted: #a0a0a0;
+  --border: #2a2a2a; --accent: #f97316; --accent-fg: #0a0a0a;
+  --success: #16a34a; --warn: #d97706; --danger: #dc2626;
+  --tier-a: #16a34a; --tier-b: #d97706; --tier-c: #dc2626;
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Consolas, monospace;
+  --fs-base: 15px; --lh-base: 1.65; --radius: 4px; --space: 16px;
+  --maxw: 1200px; --toc-w: 240px; --t-fast: 150ms ease;
+}
+[data-theme="light"] {
+  --bg:#fff; --bg-elev:#f7f8fa; --fg:#1a1a1a; --fg-muted:#5a6472;
+  --border:#e2e5ea; --accent:#ea580c; --accent-fg:#fff;
+}
