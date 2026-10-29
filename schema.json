@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BOOK2PAGE data",
+  "type": "object",
+  "required": ["meta", "thesis", "argument", "rootCause", "explain4", "principles", "cases", "adversarial", "apply", "gaps", "certification", "review"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["title", "author", "tier", "confidence", "purpose", "questions", "date", "chaptersRead", "lang"],
+      "properties": {
+        "title": {"type": "string"},
+        "author": {"type": "string"},
+        "tier": {"enum": ["A", "B", "C"]},
+        "confidence": {"enum": ["cao", "trung bình", "thấp"]},
+        "purpose": {"type": "string"},
+        "questions": {"type": "array", "items": {"type": "string"}},
+        "date": {"type": "string"},
+        "chaptersRead": {"type": "array", "items": {"type": "string"}},
+        "lang": {"const": "vi"}
+      },
+      "additionalProperties": false
+    },
+    "thesis": {"type": "string"},
+    "argument": {
+      "type": "object",
+      "required": ["conclusion", "premises", "evidence", "mechanism", "assumptions", "limits"],
+      "properties": {
+        "conclusion": {"type": "string"},
+        "premises": {"type": "array", "items": {"type": "string"}},
+        "evidence": {"type": "array", "items": {"type": "string"}},
+        "mechanism": {"type": "string"},
+        "assumptions": {"type": "array", "items": {"type": "string"}},
+        "limits": {
+          "type": "object",
+          "required": ["trueWhen", "falseWhen"],
+          "properties": {"trueWhen": {"type": "string"}, "falseWhen": {"type": "string"}},
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "rootCause": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["phenomenon", "mechanism", "root", "source"],
+        "properties": {
+          "phenomenon": {"type": "string"},
+          "mechanism": {"type": "string"},
+          "root": {"type": "string"},
+          "source": {"enum": ["sách", "suy luận", "ngoài sách"]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "explain4": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["point", "kid", "teen", "undergrad", "phd"],
+        "properties": {
+          "point": {"type": "string"}, "kid": {"type": "string"}, "teen": {"type": "string"},
+          "undergrad": {"type": "string"}, "phd": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "principles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "oneLine", "useWhen", "avoidWhen", "source"],
+        "properties": {
+          "name": {"type": "string"}, "oneLine": {"type": "string"}, "useWhen": {"type": "string"},
+          "avoidWhen": {"type": "string"}, "source": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "context", "problem", "decision", "result", "lesson", "conditions", "counterCase", "source"],
+        "properties": {
+          "id": {"type": "string"}, "context": {"type": "string"}, "problem": {"type": "string"},
+          "decision": {"type": "string"}, "result": {"type": "string"}, "lesson": {"type": "string"},
+          "conditions": {"type": "string"}, "counterCase": {"type": "string"}, "source": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "adversarial": {
+      "type": "object",
+      "required": ["attacks", "counterExample", "edgeCase"],
+      "properties": {
+        "attacks": {"type": "array", "items": {"type": "string"}},
+        "counterExample": {"type": "string"}, "edgeCase": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "apply": {
+      "type": "object",
+      "required": ["oneIdea", "action7d", "metric", "prediction"],
+      "properties": {
+        "oneIdea": {"type": "string"}, "action7d": {"type": "string"}, "metric": {"type": "string"},
+        "prediction": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["what", "whyNeed", "whereToRead"],
+        "properties": {"what": {"type": "string"}, "whyNeed": {"type": "string"}, "whereToRead": {"type": "string"}},
+        "additionalProperties": false
+      }
+    },
+    "certification": {
+      "type": "object",
+      "required": ["reconstruct", "predict", "challenge", "teach"],
+      "properties": {"reconstruct": {"type": "boolean"}, "predict": {"type": "boolean"}, "challenge": {"type": "boolean"}, "teach": {"type": "boolean"}},
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "required": ["h24", "w1", "m1", "m3"],
+      "properties": {"h24": {"type": "boolean"}, "w1": {"type": "boolean"}, "m1": {"type": "boolean"}, "m3": {"type": "boolean"}},
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
